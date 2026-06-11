@@ -45,10 +45,14 @@ function App() {
 
     // 실제 이메일 발송 요청
     emailjs.send(
-      'service_0e5ub1c',   // 🔴 1단계에서 복사한 Service ID를 넣으세요
-      'template_mpsdssm',  // 🔴 1단계에서 복사한 Template ID를 넣으세요
+      // '',   // 🔴 1단계에서 복사한 Service ID를 넣으세요
+      // '',  // 🔴 1단계에서 복사한 Template ID를 넣으세요
+      // templateParams,
+      // ''    // 🔴 1단계에서 복사한 Public Key를 넣으세요
+      import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
       templateParams,
-      'G8BTa4cX_dlbBdTMV'    // 🔴 1단계에서 복사한 Public Key를 넣으세요
+      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
     )
     .then((response) => {
        console.log('SUCCESS!', response.status, response.text);
