@@ -12,6 +12,9 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/main" element={<MainPage />} />
         <Route path="/admin" element={<AdminPage />} />
+
+        {/* 🟢 위 주소 외에 다른 모든 주소(path="*")는 무조건 메인(/)으로 이동시킵니다 */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
