@@ -1,6 +1,6 @@
 // src/App.jsx
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 // 🟢 대문자 AdminPages 대신 소문자 admin 경로로 깔끔하게 연결!
 import AdminPage from './admin/AdminPage'; 
