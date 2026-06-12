@@ -1,0 +1,19 @@
+/* AdminEditor.css */
+
+/* 1, 2번 구역은 기존 그대로 유지... */
+
+/* 3. 🔥 [진짜 최종] 에디터 내부 이미지 스마트 스케일링 */
+.admin-editor-fixed-box .ql-snow .ql-editor img,
+.admin-editor-fixed-box .ql-editor img {
+  /* 꽉 채우는 100% 대신 max-width를 100%로 주어 큰 이미지만 줄어들게 합니다 */
+  max-width: 100% !important; 
+  
+  /* 🔴 [핵심 변경] 원래 작았던 이미지가 뻥튀기되지 않도록 원본 크기를 보존합니다 */
+  width: auto !important; 
+  
+  height: auto !important; /* 비율 유지 */
+  display: block !important;
+  margin: 15px auto !important;
+}
+
+/* 4번 구역도 기존 그대로 유지... */

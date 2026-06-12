@@ -109,3 +109,14 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* 🟢 드롭다운 내부 아이템들의 이름을 data-value 값(12px, 14px 등)으로 강제 전환 */
+.ql-snow .ql-picker.ql-size .ql-picker-label::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item::before {
+  content: attr(data-value) !important;
+}
+
+/* 🟢 아무것도 선택되지 않은 기본 상태(초기 상태)일 때 라벨을 16px로 표시 */
+.ql-snow .ql-picker.ql-size .ql-picker-label:not([data-value])::before {
+  content: '16px' !important;
+}

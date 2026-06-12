@@ -1,22 +1,27 @@
 // src/pages/MainPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom'; // 🟢 페이지 이동을 위해 추가
 import emailjs from '@emailjs/browser';
-import { doc, onSnapshot, collection, query, orderBy } from 'firebase/firestore'; // 🟢 collection, query, orderBy 추가
+import { doc, onSnapshot, collection, query, orderBy } from 'firebase/firestore'; 
 import { db } from '../firebase';
 import '../App.css';
 
 function MainPage() {
+  const navigate = useNavigate(); // 🟢 라우터 이동 함수 초기화
+  const location = useLocation(); // 🟢 현재 페이지의 상태(state)를 읽어오기 위해 선언
+
   // 각 구역을 가리킬 레프(Ref) 설정
   const imgRef1 = useRef(null);
   const imgRef2 = useRef(null);
   const imgRef3 = useRef(null);
-  const boardRef = useRef(null);   // 🟢 게시판 구역 레프 추가
+  const boardRef = useRef(null);   
   const contactRef = useRef(null);
 
   // 상태 관리
   const [images, setImages] = useState({ img1: '', img2: '', img3: '' });
-  const [posts, setPosts] = useState([]); // 🟢 게시글 목록을 저장할 상태 추가
+  const [posts, setPosts] = useState([]); 
 
+  // 🟢 이미지 감시 + 게시판 감시 + 목록 돌아오기 스크롤 통합 핸들러
   useEffect(() => {
     // 1. 기존 이미지 URL 실시간 감시
     const homepageDocRef = doc(db, 'settings', 'homepage');
@@ -24,8 +29,7 @@ function MainPage() {
       if (docSnap.exists()) setImages(docSnap.data());
     });
 
-    // 2. 🟢 게시판 글 목록 실시간 감시 (posts 컬렉션 자동 감지)
-    // 최신 글이 맨 위로 오도록 생성일자(createdAt) 기준 내림차순(desc) 정렬 규칙을 만듭니다.
+    // 2. 게시판 글 목록 실시간 감시 (최신순 정렬)
     const postsCollectionRef = collection(db, 'posts');
     const q = query(postsCollectionRef, orderBy('createdAt', 'desc'));
 
@@ -34,17 +38,28 @@ function MainPage() {
       querySnapshot.forEach((doc) => {
         postsArray.push({ id: doc.id, ...doc.data() });
       });
-      setPosts(postsArray); // 가져온 글 목록을 상태에 저장
+      setPosts(postsArray); 
     }, (error) => {
       console.error("게시글을 불러오는 중 오류 발생:", error);
     });
 
-    // 컴포넌트 해제 시 모든 감시 카메라 종료
+    // 3. 🟢 [추가] 상세 페이지에서 '게시판 구역으로 가라'는 스크롤 신호를 보냈는지 감시
+    if (location.state?.scrollTo === 'board') {
+      // 컴포넌트 렌더링과 데이터 배치가 완료되는 찰나의 시간을 벌기 위해 100ms 지연 후 이동
+      setTimeout(() => {
+        boardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+
+      // 무한 스크롤 오작동을 방지하기 위해 사용한 신호(state)는 깨끗하게 비워줍니다.
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+
+    // 컴포넌트가 화면에서 사라질 때(Unmount) 리스너들을 깔끔하게 청소합니다.
     return () => {
       unsubscribeImages();
       unsubscribePosts();
     };
-  }, []);
+  }, [location, navigate]); // 🟢 location과 navigate를 의존성 배열에 등록하여 신호를 놓치지 않게 합니다.
 
   // 부드러운 스크롤 함수
   const scrollToSection = (elementRef) => {
@@ -75,13 +90,13 @@ function MainPage() {
 
   return (
     <div className="page-container">
-      {/* 상단 네비게이션 바 (게시판 버튼 추가) */}
+      {/* 상단 네비게이션 바 */}
       <nav className="navbar">
         <ul className="nav-links">
           <li><button onClick={() => scrollToSection(imgRef1)}>이미지 1</button></li>
           <li><button onClick={() => scrollToSection(imgRef2)}>이미지 2</button></li>
           <li><button onClick={() => scrollToSection(imgRef3)}>이미지 3</button></li>
-          <li><button onClick={() => scrollToSection(boardRef)}>게시판</button></li> {/* 🟢 추가 */}
+          <li><button onClick={() => scrollToSection(boardRef)}>게시판</button></li> 
           <li><button onClick={() => scrollToSection(contactRef)}>문의하기</button></li>
         </ul>
       </nav>
@@ -101,41 +116,47 @@ function MainPage() {
 
       <hr className="divider" />
 
-      {/* 🟢 3. 자유 게시판 구역 추가 */}
-      <section ref={boardRef} className="board-section" style={{ padding: '60px 20px', maxWidth: '1000px', margin: '0 auto' }}>
+      {/* 🟢 3. 자유 게시판 구역 개편 (깔끔한 테이블 목록 형상화) */}
+      <section ref={boardRef} className="board-section" style={{ padding: '60px 20px', maxWidth: '900px', margin: '0 auto' }}>
         <h2 style={{ textAlign: 'center', marginBottom: '10px', fontSize: '2rem', color: '#333' }}>공지 및 활동 게시판</h2>
-        <p style={{ textAlign: 'center', color: '#666', marginBottom: '40px' }}>관리자가 등록한 최신 소식과 프로젝트 포트폴리오를 확인하세요.</p>
+        <p style={{ textAlign: 'center', color: '#666', marginBottom: '40px' }}>확인하고 싶으신 게시글의 제목을 클릭하시면 상세 내용을 볼 수 있습니다.</p>
         
         {posts.length === 0 ? (
           <p style={{ textAlign: 'center', color: '#999', margin: '40px 0' }}>아직 등록된 게시글이 없습니다.</p>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
-            {posts.map((post) => (
-              <div key={post.id} style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '25px', backgroundColor: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
-                <h3 style={{ fontSize: '1.4rem', marginBottom: '10px', color: '#111' }}>{post.title}</h3>
-                <p style={{ fontSize: '0.85rem', color: '#999', marginBottom: '15px' }}>
-                  작성일시: {post.createdAt?.toDate().toLocaleString() || '방금 전'}
-                </p>
-                <p style={{ fontSize: '1rem', lineHeight: '1.6', color: '#444', whiteSpace: 'pre-wrap', marginBottom: '20px' }}>
-                  {post.content}
-                </p>
-                
-                {/* 게시글에 첨부된 이미지들이 있다면 가로로 나열하여 보여줍니다 */}
-                {post.imageUrls && post.imageUrls.length > 0 && (
-                  <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', marginTop: '15px' }}>
-                    {post.imageUrls.map((url, index) => (
-                      <img 
-                        key={index} 
-                        src={url} 
-                        alt={`첨부이미지-${index}`} 
-                        style={{ width: '200px', height: '150px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #eee' }} 
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', backgroundColor: '#fff', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
+            <thead>
+              <tr style={{ backgroundColor: '#f8f9fa', borderBottom: '2px solid #e2e8f0', color: '#4a5568', fontWeight: 'bold' }}>
+                <th style={{ padding: '15px 20px', width: '80px', textAlign: 'center' }}>번호</th>
+                <th style={{ padding: '15px 20px' }}>글 제목</th>
+                <th style={{ padding: '15px 20px', width: '180px', textAlign: 'center' }}>작성일</th>
+              </tr>
+            </thead>
+            <tbody>
+              {posts.map((post, index) => (
+                <tr key={post.id} style={{ borderBottom: '1px solid #edf2f7', transition: 'background-color 0.2s' }} className="board-row">
+                  {/* 최신 글이 맨 위이므로 역순 번호 매기기 */}
+                  <td style={{ padding: '15px 20px', textAlign: 'center', color: '#718096', fontSize: '14px' }}>
+                    {posts.length - index}
+                  </td>
+                  {/* 제목 구역: 클릭 시 상세 페이지로 라우팅 */}
+                  <td style={{ padding: '15px 20px' }}>
+                    <span 
+                      onClick={() => navigate(`/post/${post.id}`)} // 🟢 클릭 시 해당 글의 ID를 파라미터로 넘김
+                      style={{ color: '#2b6cb0', cursor: 'pointer', fontWeight: '600', fontSize: '15px', textDecoration: 'none' }}
+                      onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
+                      onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+                    >
+                      {post.title}
+                    </span>
+                  </td>
+                  <td style={{ padding: '15px 20px', textAlign: 'center', color: '#718096', fontSize: '14px' }}>
+                    {post.createdAt?.toDate().toLocaleDateString() || '방금 전'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </section>
 
