@@ -93,7 +93,21 @@ function AdminPage() {
   };
 
   // 🟢 Quill 모듈 설정을 useMemo로 감싸 렌더링 시 무한 루프 도는 현상 방지
-  const quillModules = useMemo(() => ({
+  const quillModules = {
+    toolbar: [
+      [{ 'size': ['12px', '14px', '16px', '18px', '24px', '32px'] }],
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }], 
+      [{ 'align': [] }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['link', 'image'],
+      ['clean']
+    ],
+  };
+
+  /*
+    const quillModules = useMemo(() => ({
     toolbar: [
       [{ 'size': ['12px', '14px', '16px', '18px', '24px', '32px'] }],
       [{ 'header': [1, 2, 3, false] }],
@@ -105,7 +119,7 @@ function AdminPage() {
       ['clean']
     ],
   }), []);
-
+  */
   // Base64 데이터를 진짜 파일(Blob) 객체로 변환하는 함수 (Ctrl+V용)
   const base64ToBlob = (base64Data, contentType = '') => {
     const sliceSize = 1024;
