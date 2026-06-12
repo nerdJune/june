@@ -120,3 +120,11 @@ code {
 .ql-snow .ql-picker.ql-size .ql-picker-label:not([data-value])::before {
   content: '16px' !important;
 }
+
+/* 전역 CSS 파일에 추가 */
+.ql-editor .ql-size-12px { font-size: 12px; }
+.ql-editor .ql-size-14px { font-size: 14px; }
+.ql-editor .ql-size-16px { font-size: 16px; }
+.ql-editor .ql-size-18px { font-size: 18px; }
+.ql-editor .ql-size-24px { font-size: 24px; }
+.ql-editor .ql-size-32px { font-size: 32px; }
