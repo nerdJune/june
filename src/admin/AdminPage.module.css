@@ -294,3 +294,56 @@
   text-align: center;
   color: #999;
 }
+
+/* 에디터 고정 높이 + 가로 넘침 완전 봉쇄 */
+.quillWrapper {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: 4px;
+  overflow: hidden;
+  contain: layout;
+}
+
+.quillWrapper :global(.ql-toolbar) {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: #f8f9fa;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+}
+
+.quillWrapper :global(.ql-container) {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  height: 350px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid #ccc;
+  border-radius: 0 0 4px 4px;
+  background: #fff;
+}
+
+.quillWrapper :global(.ql-editor) {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-height: 100%;
+}
+
+.quillWrapper :global(.ql-editor *) {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.quillWrapper :global(.ql-editor img) {
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+}

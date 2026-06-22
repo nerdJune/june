@@ -1,8 +1,11 @@
 .container {
   max-width: 800px;
+  width: 100%;
   margin: 40px auto;
   padding: 20px;
   font-family: sans-serif;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .backBtn {
@@ -47,4 +50,21 @@
   text-align: center;
   margin-top: 50px;
   color: #666;
+}
+
+/* 게시글 본문 이미지 크기 제한 */
+.postContent :global(.ql-editor) {
+  padding: 0;
+}
+
+.postContent :global(.ql-editor img) {
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.postContent :global(.ql-editor *) {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  word-break: break-word;
 }

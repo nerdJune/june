@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -33,6 +33,24 @@ function PostDetailPage() {
     fetchPost();
   }, [id, navigate]);
 
+  // 게시글 본문 내 이미지 가로 넘침 방지
+  const contentRef = useRef(null);
+  useEffect(() => {
+    if (!contentRef.current) return;
+    const imgs = contentRef.current.querySelectorAll('img');
+    imgs.forEach((img) => {
+      img.removeAttribute('width');
+      img.removeAttribute('height');
+      img.style.setProperty('max-width', '100%', 'important');
+      img.style.setProperty('height', 'auto', 'important');
+      const parent = img.parentElement;
+      if (parent) {
+        parent.style.setProperty('max-width', '100%', 'important');
+        parent.style.setProperty('overflow', 'hidden', 'important');
+      }
+    });
+  }, [post]);
+
   if (loading) return <p className={styles.loading}>불러오는 중...</p>;
   if (!post) return null;
 
@@ -50,7 +68,7 @@ function PostDetailPage() {
         </div>
       </div>
 
-      <div className={styles.postContent}>
+      <div ref={contentRef} className={styles.postContent}>
         <ReactQuill
           value={post.content}
           readOnly={true}

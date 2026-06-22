@@ -80,6 +80,53 @@ function AdminPage() {
 
   const quillRef = useRef(null);
 
+  // 이미지 삽입/로드 완료 시점에 가로 넘침 방지
+  useEffect(() => {
+    if (!user) return;
+
+    const timer = setTimeout(() => {
+      const quill = quillRef.current?.getEditor();
+      if (!quill) return;
+
+      // img + 부모 p 태그 모두 가로 넘침 방지
+      const applyToImg = (img) => {
+        const apply = () => {
+          img.removeAttribute('width');
+          img.removeAttribute('height');
+          img.style.setProperty('max-width', '100%', 'important');
+          img.style.setProperty('height', 'auto', 'important');
+          // 부모 p 태그도 함께 제한
+          const parent = img.parentElement;
+          if (parent) {
+            parent.style.setProperty('max-width', '100%', 'important');
+            parent.style.setProperty('overflow', 'hidden', 'important');
+          }
+        };
+        apply();
+        img.addEventListener('load', apply);
+      };
+
+      // text-change 때마다 새로 추가된 img에 적용
+      const constrainImages = () => {
+        quill.root.querySelectorAll('img').forEach(applyToImg);
+      };
+
+      quill.on('text-change', constrainImages);
+      // 수정 모드 진입 시 기존 이미지에도 즉시 적용
+      constrainImages();
+
+      quillRef.current._constrainImages = constrainImages;
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+      const quill = quillRef.current?.getEditor();
+      if (quill && quillRef.current?._constrainImages) {
+        quill.off('text-change', quillRef.current._constrainImages);
+      }
+    };
+  }, [user]);
+
   // 로그인 상태 감시 + 관리자 확인 + 게시글 실시간 로드
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
@@ -273,6 +320,27 @@ function AdminPage() {
     setTitle(post.title);
     setContent(post.content);
     window.scrollTo({ top: 300, behavior: 'smooth' });
+
+    // 수정 모드 진입 후 에디터가 렌더링되면 기존 이미지에 max-width 재적용
+    setTimeout(() => {
+      const quill = quillRef.current?.getEditor();
+      if (!quill) return;
+      quill.root.querySelectorAll('img').forEach((img) => {
+        const apply = () => {
+          img.removeAttribute('width');
+          img.removeAttribute('height');
+          img.style.setProperty('max-width', '100%', 'important');
+          img.style.setProperty('height', 'auto', 'important');
+          const parent = img.parentElement;
+          if (parent) {
+            parent.style.setProperty('max-width', '100%', 'important');
+            parent.style.setProperty('overflow', 'hidden', 'important');
+          }
+        };
+        apply();
+        img.addEventListener('load', apply, { once: true });
+      });
+    }, 100);
   };
 
   const cancelEdit = () => {
@@ -371,7 +439,7 @@ function AdminPage() {
           </div>
           <div>
             <label className={styles.formLabel}>내용</label>
-            <div className={styles.editorWrapper}>
+            <div className={styles.quillWrapper}>
               <ReactQuill
                 ref={quillRef}
                 theme="snow"
@@ -379,7 +447,6 @@ function AdminPage() {
                 value={content}
                 onChange={setContent}
                 placeholder="내용을 작성하세요. 이미지 붙여넣기(Ctrl+V) 및 파일 첨부 모두 지원합니다."
-                style={{ height: '350px', marginBottom: '50px' }}
               />
             </div>
           </div>
