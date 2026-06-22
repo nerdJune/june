@@ -1,0 +1,267 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-top: 70px;
+}
+
+/* 네비게이션 */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.navLinks {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+  margin: 0;
+  padding: 0 15px;
+  width: 100%;
+  justify-content: center;
+}
+
+.navLinks li {
+  flex-shrink: 0;
+}
+
+.navLinks button {
+  background: none;
+  border: none;
+  white-space: nowrap;
+  font-size: clamp(0.85rem, 3.5vw, 1.1rem);
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 5px 8px;
+}
+
+.navLinks button:hover {
+  color: #0070f3;
+}
+
+/* 이미지 섹션 */
+.imageSection {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1200px;
+  gap: 60px;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+.imageBlock {
+  scroll-margin-top: 90px;
+  width: 100%;
+}
+
+.imageWrapper {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.imageWrapper:hover {
+  transform: translateY(-5px);
+}
+
+.imageWrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* 구분선 */
+.divider {
+  width: 80%;
+  max-width: 1200px;
+  border: 0;
+  height: 1px;
+  background: #e0e0e0;
+  margin: 40px 0;
+}
+
+/* 게시판 섹션 */
+.boardSection {
+  padding: 60px 20px;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  scroll-margin-top: 90px;
+  box-sizing: border-box;
+}
+
+.boardSection h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 2rem;
+  color: #333;
+}
+
+.boardDescription {
+  text-align: center;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+.boardEmpty {
+  text-align: center;
+  color: #999;
+  margin: 40px 0;
+}
+
+.boardTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.boardTable thead tr {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e2e8f0;
+  color: #4a5568;
+  font-weight: bold;
+}
+
+.boardTable th {
+  padding: 15px 20px;
+}
+
+.boardTable th:first-child,
+.boardTable td:first-child {
+  width: 80px;
+  text-align: center;
+}
+
+.boardTable th:last-child,
+.boardTable td:last-child {
+  width: 180px;
+  text-align: center;
+}
+
+.boardRow {
+  border-bottom: 1px solid #edf2f7;
+  transition: background-color 0.2s;
+}
+
+.boardRow:hover {
+  background-color: #f7faff;
+}
+
+.boardTable td {
+  padding: 15px 20px;
+}
+
+.boardNumCell {
+  color: #718096;
+  font-size: 14px;
+}
+
+.boardTitleLink {
+  color: #2b6cb0;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.boardTitleLink:hover {
+  text-decoration: underline;
+}
+
+.boardDateCell {
+  color: #718096;
+  font-size: 14px;
+}
+
+/* 문의 섹션 */
+.contactSection {
+  scroll-margin-top: 90px;
+  width: 100%;
+  max-width: 600px;
+  padding: 60px 20px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.contactSection h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #111;
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 5px;
+}
+
+.formGroup label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.contactForm input,
+.contactForm textarea {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.contactForm input:focus,
+.contactForm textarea:focus {
+  border-color: #0070f3;
+}
+
+.submitBtn {
+  padding: 15px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+  margin-top: 10px;
+}
+
+.submitBtn:hover {
+  background-color: #0051a8;
+}
+
+.submitBtn:active {
+  transform: scale(0.98);
+}
